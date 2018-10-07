@@ -50,7 +50,7 @@ local info={
     t.x = (a.x + b.x) / 2  -- center x
     t.y = (a.y + b.y) / 2  -- center y
     t.deg = atan2(b.x-a.x,b.y-a.y)
-    -- a‚©‚çb‚ÌŒü‚«‚Ì90“x‘¤‚ÌCa‚Æb‚Ì”¼•ª‚Ì‹——£‚ÌÀ•W
+    -- aã‹ã‚‰bã®å‘ãã®90åº¦å´ã®ï¼Œaã¨bã®åŠåˆ†ã®è·é›¢ã®åº§æ¨™
     t.fx = a.x + (t.dst/2) * cos(t.deg+0.25)
     t.fy = a.y + (t.dst/2) * sin(t.deg+0.25)
   end,
