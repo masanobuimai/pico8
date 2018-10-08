@@ -4,34 +4,46 @@ __lua__
 left,right,up,down,fire1,fire2=0,1,2,3,4,5
 black,dark_blue,dark_purple,dark_green,brown,dark_gray,light_gray,white,red,orange,yellow,green,blue,indigo,pink,peach=0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15
 
-s,wc=1,8      -- sprite no, wake count
-cx,cy=0,0     -- camera-x, camera-y
-x,y=59,59
-mx=512        -- max-x
-flipx=false
-speed=2
+cx,cy=0,0         -- camera-x, camera-y
+screen_width=512 -- max-x
 
+mario = {}
 function _init()
-  
+  mario = {
+    x=64,
+    y=100,
+    hsize=8,
+    flipx=false,
+    speed=2,
+    sprite=16,
+    walk_count=8,
+    update=function(t) 
+      t.speed = btn(fire2) and 3 or 2
+      if (btn(left)) then
+        t.x=t.x<=t.hsize and t.hsize or t.x-t.speed
+        t.flipx=true
+        t.walk_count = t.walk_count<1 and 8 or t.walk_count-1
+        t.sprite = t.walk_count<4 and 18 or 20
+      end
+      if (btn(right)) then
+        t.x=t.x>=screen_width-t.hsize and screen_width-t.hsize or t.x+t.speed
+        t.flipx=false
+        t.walk_count = t.walk_count<1 and 8 or t.walk_count-1
+        t.sprite = t.walk_count<4 and 18 or 20
+      end
+    end,
+    draw=function(t)
+      print("("..t.x..","..t.y..")",t.x-t.hsize*2,t.y-t.hsize*2,white)
+      spr(t.sprite,t.x-t.hsize,t.y-t.hsize,2,2,t.flipx)
+      print("wc:"..t.walk_count..",spr:"..t.sprite..",spd:"..t.speed,cx,8,white)
+    end
+  }
 end
 
 function _update()
-  s=16
-  speed = btn(fire1) and 3 or 2
-  if (btn(left)) then
-    x=x<1 and 0 or x-speed
-    flipx=true
-    wc = wc<1 and 8 or wc-1
-    s = wc<4 and 18 or 20
-  end
-  if (btn(right)) then
-    x=x>mx-17 and mx-16 or x+speed
-    flipx=false
-    wc = wc<1 and 8 or wc-1
-    s = wc<4 and 18 or 20
-  end
-  if (x-cx>93) then cx=(x>mx-20-16) and mx-128 or x-93 end
-  if (x-cx<20) then cx=(x<20) and 0 or x-20 end
+  mario:update()
+  if (mario.x-cx>108) then cx=mario.x>screen_width-20 and screen_width-128 or mario.x-108 end
+  if (mario.x-cx<20) then cx=mario.x<20 and 0 or mario.x-20 end
 end
 
 function _draw()
@@ -39,13 +51,11 @@ function _draw()
   
   camera(cx,cy)
   line(cx,0,cx,128,dark_gray)
-  line(mx-1,0,mx-1,128,red)
+  line(screen_width-1,0,screen_width-1,128,red)
   rect(cx+20,cy+20,cx+108,cy+108,dark_gray)
-  print("("..cx..","..cy.."):"..(x-cx),cx,0,white)
-  print("wc:"..wc..",s:"..s..",sp:"..speed,cx,8,white)
+  print("("..cx..","..cy.."):"..(mario.x-cx),cx,0,white)
+  mario:draw()
   
-  print("("..x..","..y..")",x-12,y-8,white)
-  spr(s,x,y,2,2,flipx)
 end
 __gfx__
 00000000004444400044444000444440000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
