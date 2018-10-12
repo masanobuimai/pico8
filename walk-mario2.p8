@@ -23,15 +23,13 @@ function _init()
       t.sprite=16
       dash = btn(fire2) and 1 or 0
       if (btn(left)) then
-        t.vx=t.vx>=max_speed and max_speed or t.vx+t.accel
-        t.x=t.x<=t.hsize and t.hsize or t.x-t.vx-dash
+        t.vx=t.vx<=-max_speed and -max_speed or t.vx-t.accel
         t.flipx=true
         t.walk_count = t.walk_count<1 and 8 or t.walk_count-1
         t.sprite = t.walk_count<4 and 18 or 20
       end
       if (btn(right)) then
         t.vx=t.vx>=max_speed and max_speed or t.vx+t.accel
-        t.x=t.x>=screen_width-t.hsize and screen_width-t.hsize or t.x+t.vx+dash
         t.flipx=false
         t.walk_count = t.walk_count<1 and 8 or t.walk_count-1
         t.sprite = t.walk_count<4 and 18 or 20
@@ -39,7 +37,12 @@ function _init()
       if (btn(fire1)) then
         t.sprite=22
       end
-      t.vx=t.vx<=0 and 0 or t.vx-t.accel*0.8
+      t.x=flr(t.x+t.vx)
+      if (t.x<=t.hsize) t.x=t.hsize
+      if (t.x>=screen_width-t.hsize) t.x=screen_width-t.hsize
+      if (abs(t.vx)<0.1) t.vx=0
+      if (t.vx<0) t.vx=t.vx+t.accel*0.6
+      if (t.vx>0) t.vx=t.vx-t.accel*0.6
     end,
     draw=function(t)
       print("("..t.x..","..t.y..")",t.x-t.hsize*2,t.y-t.hsize*2,white)
